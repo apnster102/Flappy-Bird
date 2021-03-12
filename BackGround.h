@@ -1,5 +1,5 @@
-#ifndef _TEXTURE_MANAGER_H_
-#define _TEXTURE_MANAGER_H_
+#ifndef BACK__GROUND_H_
+#define BACK__GROUND_H_
 
 #include "GameLoop.h"
 

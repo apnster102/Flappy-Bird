@@ -9,7 +9,7 @@ GameLoop::GameLoop()
     window = NULL;
     renderer = NULL;
     GameState = false;
-    player = NULL;
+    //player = NULL;
     background = NULL;
 }
 
@@ -43,8 +43,12 @@ void GameLoop::InitSDL()
     if (renderer == nullptr) logSDLError(cout, "CreateRenderer", true);
     if (renderer)
     {
+        cout << "Renderer is here!";
         GameState = true;
-        player = TextureManager::Texture("image/re.png", renderer);
+       // player = TextureManager::Texture("image/fly1.png", renderer);
+
+        gPlayer.loadImage("image/fly1.png", renderer);
+
         background = TextureManager::Texture("image/bg.png", renderer);
     }
 
@@ -59,47 +63,24 @@ void GameLoop::Event()
     {
         GameState = false;
     }
-    if(event1.type == SDL_MOUSEBUTTONDOWN)
-    {
-        inGamePlayer.y -= 1;
-        //inGamePlayer.x += 3;
-    }
-    if(event1.type == SDL_KEYDOWN)
-    {
-        if(event1.key.keysym.sym == SDLK_RIGHT)
-        {
-            inGamePlayer.x += 5;
-        }
-        else if(event1.key.keysym.sym == SDLK_LEFT)
-        {
-            inGamePlayer.x -= 5;
-        }
-        else if(event1.key.keysym.sym == SDLK_UP)
-        {
-            inGamePlayer.y -= 5;
-        }
-        else if(event1.key.keysym.sym == SDLK_DOWN)
-        {
-            inGamePlayer.y += 5;
-        }
-    }
+
+    gPlayer.handleEvent(event1, renderer);
+
 }
 
 void GameLoop::Update()
 {
-    inGamePlayer.h = 660*0.5;
-    inGamePlayer.w = 600*0.5;
-    inGamePlayer.x = 300;
-    inGamePlayer.y = 100;
+
 }
 
 void GameLoop::Render()
 {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 
     SDL_RenderCopy(renderer, background, NULL, NULL);
 
-    SDL_RenderCopy(renderer, player, NULL, &inGamePlayer);
+    gPlayer.render(renderer);
 
     SDL_RenderPresent(renderer);
 }

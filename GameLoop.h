@@ -1,10 +1,12 @@
-#ifndef _GAMELOOP_H_
-#define _GAMELOOP_H_
+#ifndef GAMELOOP__H_
+#define GAMELOOP__H_
 
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
-#include "TextureManager.h"
+#include "BackGround.h"
+#include "Player.h"
+
 
 class GameLoop
 {
@@ -15,10 +17,13 @@ private:
 	bool GameState;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	SDL_Rect inGamePlayer;
+
 	SDL_Texture* background;
-	SDL_Texture* player;
+
 	SDL_Event event1;
+
+	Player gPlayer;
+
 public:
 	GameLoop();
 	bool getGameState();
@@ -29,6 +34,7 @@ public:
 	void Render();
 	void QuitSDL();
 	~GameLoop();
+
 };
 
 
