@@ -43,13 +43,13 @@ void GameLoop::InitSDL()
     if (renderer == nullptr) logSDLError(cout, "CreateRenderer", true);
     if (renderer)
     {
-        cout << "Renderer is here!";
+        cout << "Successfull!" << endl;
         GameState = true;
-       // player = TextureManager::Texture("image/fly1.png", renderer);
 
-        gPlayer.loadImage("image/fly1.png", renderer);
+        gPlayer.loadImage("image/flyGreen.png", renderer);
+        gPlayer.setSprite();
 
-        background = TextureManager::Texture("image/bg.png", renderer);
+        background = BackGround::Texture("image/background.png", renderer);
     }
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
@@ -75,6 +75,7 @@ void GameLoop::Update()
 
 void GameLoop::Render()
 {
+    gPlayer.gravity();
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 

@@ -3,13 +3,13 @@
 
 #include "GameLoop.h"
 
-class TextureManager
+class BackGround
 {
 public:
-    TextureManager();
+    BackGround();
     static SDL_Texture* Texture(const char* filePath, SDL_Renderer* ren);
 
-    ~TextureManager();
+    ~BackGround();
 };
 
 

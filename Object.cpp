@@ -23,7 +23,6 @@ bool Object::loadImage(string path, SDL_Renderer* ren)
         cout << "Failed to load Image!" << endl;
     else
 	{
-		//SDL_SetColorKey(tempSurface, SDL_TRUE, SDL_MapRGB(tempSurface->format, 255, 255, 255));
 		gtexture = SDL_CreateTextureFromSurface(ren, tempSurface);
 
 		if(gtexture == NULL)
@@ -31,8 +30,8 @@ bool Object::loadImage(string path, SDL_Renderer* ren)
 		else
 		{
 		    // Get image dimensions
-			rect.w = (tempSurface->w)/2;
-			rect.h = (tempSurface->h)/2;
+			rect.w = (tempSurface->w);
+			rect.h = (tempSurface->h);
 		}
 
 		SDL_FreeSurface(tempSurface);
@@ -49,7 +48,7 @@ void Object::render(SDL_Renderer* ren, const SDL_Rect* clip)
 	SDL_Rect renderQuad = {rect.x, rect.y, rect.w, rect.h};
 
     //Set clip rendering dimensions
-    if( clip != NULL )
+    if(clip != NULL)
     {
         renderQuad.w = clip->w;
         renderQuad.h = clip->h;
