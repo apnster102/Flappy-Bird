@@ -13,12 +13,16 @@ public:
     void render(SDL_Renderer* ren);
     void handleEvent(SDL_Event event, SDL_Renderer* ren);
     void setSprite();
-    void gravity();
-
+    void move();
+    bool getLiveState();
 private:
-    float upStep, fallStep;
-    float pos_x, pos_y;
+    float step;
     int frame_width, frame_height;
+    double degree = 0;
+    SDL_RendererFlip flipType = SDL_FLIP_NONE;
+
+    bool flyUp;
+    bool isDead;
 
     SDL_Rect spriteClips[2];
     int frame;

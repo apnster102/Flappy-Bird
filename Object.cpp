@@ -20,18 +20,18 @@ bool Object::loadImage(string path, SDL_Renderer* ren)
 
 	SDL_Surface* tempSurface = IMG_Load(path.c_str());
 	if(tempSurface == NULL)
-        cout << "Failed to load Image!" << endl;
+        cout << "Failed to load Image " << path << " SDL_Image error: " << IMG_GetError() << endl;
     else
 	{
 		gtexture = SDL_CreateTextureFromSurface(ren, tempSurface);
 
 		if(gtexture == NULL)
-            cout << "Failed to get Texture!" << endl;
+            cout << "Failed to get Texture from " << path << " SDL error: " << SDL_GetError() << endl;
 		else
 		{
 		    // Get image dimensions
-			rect.w = (tempSurface->w);
-			rect.h = (tempSurface->h);
+			rect.w = tempSurface->w;
+			rect.h = tempSurface->h;
 		}
 
 		SDL_FreeSurface(tempSurface);
@@ -44,17 +44,27 @@ bool Object::loadImage(string path, SDL_Renderer* ren)
 
 void Object::render(SDL_Renderer* ren, const SDL_Rect* clip)
 {
-    //Set rendering space and render to screen
-	SDL_Rect renderQuad = {rect.x, rect.y, rect.w, rect.h};
-
-    //Set clip rendering dimensions
-    if(clip != NULL)
+    SDL_Rect renderQuad = { rect.x, rect.y, rect.w, rect.h };
+    if (clip != NULL)
     {
         renderQuad.w = clip->w;
         renderQuad.h = clip->h;
     }
+    SDL_RenderCopy(ren, tex, clip, &renderQuad);
+}
 
-	SDL_RenderCopy(ren, tex, clip, &renderQuad);
+void Object::setRect (const int& x, const int& y)
+{
+    rect.x = x;
+    rect.y = y;
+}
+SDL_Texture* Object::getTex() const
+{
+    return tex;
+}
+SDL_Rect Object::getRect() const
+{
+    return rect;
 }
 
 void Object::free()

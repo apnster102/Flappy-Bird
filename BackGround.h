@@ -1,15 +1,20 @@
 #ifndef BACK__GROUND_H_
 #define BACK__GROUND_H_
 
-#include "GameLoop.h"
+#include "Object.h"
 
-class BackGround
+class BackGround : public Object
 {
 public:
     BackGround();
-    static SDL_Texture* Texture(const char* filePath, SDL_Renderer* ren);
+    bool loadImage(const char* path, SDL_Renderer* ren);
+    void render(SDL_Renderer* ren);
+    void groundScrolling(SDL_Renderer* ren);
 
     ~BackGround();
+
+private:
+    int scrollingOffset;
 };
 
 

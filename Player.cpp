@@ -2,13 +2,13 @@
 
 Player::Player()
 {
-    upStep = 7;
-    fallStep = 1;
-    pos_x = 0;
-    pos_y = 0;
+    step = 0;
     frame_width = 0;
     frame_height = 0;
     frame = 0;
+
+    isDead = false;
+    flyUp = false;
 }
 
 Player::~Player()
@@ -31,14 +31,23 @@ bool Player::loadImage(const char* path, SDL_Renderer* ren)
 
 void Player::render(SDL_Renderer* ren)
 {
+    if(getLiveState())
+        loadImage("image/dieGreen.png", ren);
+    else
+        loadImage("image/flyGreen.png", ren);
+
     SDL_Rect* currentClip = &spriteClips[frame/2];
-    frame++;
+
+    if(flyUp)
+        frame++;
+    else
+        frame = 2;
     if(frame/2 >= 2)
     {
         frame = 0;
     }
     SDL_Rect renderQuad = {rect.x, rect.y, frame_width, frame_height};
-    SDL_RenderCopy(ren, tex, currentClip, &renderQuad);
+    SDL_RenderCopyEx(ren, tex, currentClip, &renderQuad, degree, NULL, flipType);
 }
 
 void Player::setSprite()
@@ -54,24 +63,38 @@ void Player::setSprite()
     spriteClips[1].h = frame_height;
 }
 
-void Player::gravity()
+void Player::move()
 {
-    rect.y += fallStep;
-    cout << "y - " << fallStep << endl;
+        rect.y += step;
 }
 
 void Player::handleEvent(SDL_Event event, SDL_Renderer* ren)
 {
-    if(event.type == SDL_MOUSEBUTTONDOWN || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_UP))
+    if(event.type == SDL_MOUSEBUTTONDOWN)
     {
-        rect.y -= upStep;
-        cout << "x + " << upStep << endl;
+        step = -5;
+        degree = -30;
+        flyUp = true;
     }
-    if(event.type == SDL_KEYDOWN)
+    else if(event.type == SDL_MOUSEBUTTONUP)
     {
-        if(event.key.keysym.sym == SDLK_DOWN)
-        {
-            rect.y += 10;
-        }
+        step = 5;
+        degree = 30;
+        flyUp = false;
     }
+    if(getLiveState())
+    {
+        step = 0;
+        degree = 0;
+    }
+}
+
+bool Player::getLiveState()
+{
+    if(rect.y >= 420 || rect.y <= 0)
+    {
+        isDead = true;
+    }
+    else isDead = false;
+    return isDead;
 }

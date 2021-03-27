@@ -6,6 +6,7 @@
 #include <SDL_image.h>
 #include "BackGround.h"
 #include "Player.h"
+#include "BackGround.h"
 
 
 class GameLoop
@@ -18,11 +19,10 @@ private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 
-	SDL_Texture* background;
-
 	SDL_Event event1;
 
 	Player gPlayer;
+	BackGround background, ground;
 
 public:
 	GameLoop();
@@ -30,7 +30,6 @@ public:
 	void logSDLError(std::ostream& os, const std::string &msg, bool fatal);
 	void InitSDL();
 	void Event();
-	void Update();
 	void Render();
 	void QuitSDL();
 	~GameLoop();

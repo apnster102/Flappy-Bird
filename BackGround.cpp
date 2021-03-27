@@ -1,11 +1,39 @@
 #include "BackGround.h"
 
-SDL_Texture* BackGround::Texture(const char* filePath, SDL_Renderer* ren)
+BackGround::BackGround()
 {
-    SDL_Texture* gtexture;
-    SDL_Surface* tempSurface;
-    tempSurface = IMG_Load(filePath);
-    gtexture = SDL_CreateTextureFromSurface(ren, tempSurface);
-    SDL_FreeSurface(tempSurface);
-    return gtexture;
+    scrollingOffset = 0;
 }
+
+BackGround::~BackGround()
+{
+    free();
+}
+
+bool BackGround::loadImage(const char* path, SDL_Renderer* ren)
+{
+    bool load = Object::loadImage(path, ren);
+
+    return load;
+}
+
+void BackGround::render(SDL_Renderer* ren)
+{
+    Object::render(ren, NULL);
+}
+
+void BackGround::groundScrolling(SDL_Renderer* ren)
+{
+    scrollingOffset -= 3;
+
+    if (scrollingOffset < - rect.w)
+	{
+		scrollingOffset = 0;
+	}
+	rect.x = scrollingOffset;
+	render(ren);
+
+	rect.x = scrollingOffset + rect.w - 2;
+	render(ren);
+}
+

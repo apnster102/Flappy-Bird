@@ -9,8 +9,6 @@ GameLoop::GameLoop()
     window = NULL;
     renderer = NULL;
     GameState = false;
-    //player = NULL;
-    background = NULL;
 }
 
 bool GameLoop::getGameState()
@@ -43,13 +41,19 @@ void GameLoop::InitSDL()
     if (renderer == nullptr) logSDLError(cout, "CreateRenderer", true);
     if (renderer)
     {
-        cout << "Successfull!" << endl;
+        cout << "Renderer created!" << endl;
         GameState = true;
 
         gPlayer.loadImage("image/flyGreen.png", renderer);
+        gPlayer.setRect(300, 200);
         gPlayer.setSprite();
 
-        background = BackGround::Texture("image/background.png", renderer);
+        ground.loadImage("image/ground.png", renderer);
+        ground.setRect(0, SCREEN_HEIGHT-50);
+
+        background.loadImage("image/background.png", renderer);
+        background.setRect(0,0);
+
     }
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
@@ -65,21 +69,19 @@ void GameLoop::Event()
     }
 
     gPlayer.handleEvent(event1, renderer);
-
-}
-
-void GameLoop::Update()
-{
-
 }
 
 void GameLoop::Render()
 {
-    gPlayer.gravity();
+    gPlayer.move();
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 
-    SDL_RenderCopy(renderer, background, NULL, NULL);
+    background.render(renderer);
+
+    ground.groundScrolling(renderer);
+
+    //pipe.render(renderer);
 
     gPlayer.render(renderer);
 
