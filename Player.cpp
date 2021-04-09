@@ -31,7 +31,7 @@ bool Player::loadImage(const char* path, SDL_Renderer* ren)
 
 void Player::render(SDL_Renderer* ren)
 {
-    if(getLiveState())
+    if(isDead)
         loadImage("image/dieGreen.png", ren);
     else
         loadImage("image/flyGreen.png", ren);
@@ -65,24 +65,25 @@ void Player::setSprite()
 
 void Player::move()
 {
-        rect.y += step;
+    rect.y += step;
 }
 
 void Player::handleEvent(SDL_Event event, SDL_Renderer* ren)
 {
-    if(event.type == SDL_MOUSEBUTTONDOWN)
+    if(event.type == SDL_MOUSEBUTTONDOWN && !getLiveState())
     {
         step = -5;
         degree = -30;
         flyUp = true;
     }
-    else if(event.type == SDL_MOUSEBUTTONUP)
+    else if(event.type == SDL_MOUSEBUTTONUP||getLiveState())
     {
         step = 5;
         degree = 30;
         flyUp = false;
     }
-    if(getLiveState())
+    //if the bird hit the ground
+    if(rect.y >= SCREEN_HEIGHT-rect.h-GROUND_HEIGHT+2 || rect.y <= 0)
     {
         step = 0;
         degree = 0;
@@ -91,10 +92,22 @@ void Player::handleEvent(SDL_Event event, SDL_Renderer* ren)
 
 bool Player::getLiveState()
 {
-    if(rect.y >= 420 || rect.y <= 0)
-    {
-        isDead = true;
-    }
-    else isDead = false;
     return isDead;
+}
+
+void Player::setLiveState(bool lState)
+{
+    isDead = lState;
+}
+
+SDL_Rect Player::getFrameRect()
+{
+    SDL_Rect pRect;
+
+    pRect.x = rect.x;
+    pRect.y = rect.y;
+    pRect.w = rect.w/2;
+    pRect.h = rect.h;
+
+    return pRect;
 }

@@ -7,7 +7,7 @@
 #include "BackGround.h"
 #include "Player.h"
 #include "BackGround.h"
-
+#include "Pipes.h"
 
 class GameLoop
 {
@@ -23,6 +23,10 @@ private:
 
 	Player gPlayer;
 	BackGround background, ground;
+	int numOfPipes = 3;
+	PipePair* pipes = new PipePair[numOfPipes];
+
+	int score;
 
 public:
 	GameLoop();
@@ -30,6 +34,7 @@ public:
 	void logSDLError(std::ostream& os, const std::string &msg, bool fatal);
 	void InitSDL();
 	void Event();
+	void Update();
 	void Render();
 	void QuitSDL();
 	~GameLoop();

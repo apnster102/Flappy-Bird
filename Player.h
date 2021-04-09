@@ -2,6 +2,7 @@
 #define PLAYER__H_
 
 #include "Object.h"
+#include "Pipes.h"
 
 class Player : public Object
 {
@@ -15,6 +16,9 @@ public:
     void setSprite();
     void move();
     bool getLiveState();
+    void setLiveState(bool lState);
+    bool hitTheGround();
+    SDL_Rect getFrameRect();
 private:
     float step;
     int frame_width, frame_height;
@@ -23,6 +27,7 @@ private:
 
     bool flyUp;
     bool isDead;
+    bool hit;
 
     SDL_Rect spriteClips[2];
     int frame;

@@ -1,5 +1,3 @@
-#include <iostream>
-#include <SDL.h>
 #include "GameLoop.h"
 
 using namespace std;
@@ -9,6 +7,7 @@ GameLoop::GameLoop()
     window = NULL;
     renderer = NULL;
     GameState = false;
+    score = 0;
 }
 
 bool GameLoop::getGameState()
@@ -45,7 +44,7 @@ void GameLoop::InitSDL()
         GameState = true;
 
         gPlayer.loadImage("image/flyGreen.png", renderer);
-        gPlayer.setRect(300, 200);
+        gPlayer.setRect(400, 200);
         gPlayer.setSprite();
 
         ground.loadImage("image/ground.png", renderer);
@@ -54,6 +53,12 @@ void GameLoop::InitSDL()
         background.loadImage("image/background.png", renderer);
         background.setRect(0,0);
 
+
+        for(int i = 0; i < numOfPipes; i++)
+        {
+            pipes[i].spawnPipes(renderer);
+            pipes[i].setOffset(900 + i*330);
+        }
     }
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
@@ -69,6 +74,15 @@ void GameLoop::Event()
     }
 
     gPlayer.handleEvent(event1, renderer);
+    if(pipes->collided(gPlayer.getFrameRect()))
+    {
+        gPlayer.setLiveState(true);
+    }
+}
+
+void GameLoop::Update()
+{
+
 }
 
 void GameLoop::Render()
@@ -79,9 +93,12 @@ void GameLoop::Render()
 
     background.render(renderer);
 
-    ground.groundScrolling(renderer);
+    for(int i = 0; i < numOfPipes; i++)
+    {
+        pipes[i].roll(renderer);
+    }
 
-    //pipe.render(renderer);
+    ground.groundScrolling(renderer);
 
     gPlayer.render(renderer);
 

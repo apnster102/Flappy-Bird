@@ -4,6 +4,11 @@
 #include <SDL.h>
 #include "SDL_image.h"
 #include <iostream>
+const int SCREEN_WIDTH = 960;
+const int SCREEN_HEIGHT = 540;
+const int GROUND_HEIGHT = 50;
+const int PIPE_HEIGHT = 300;
+const int PIPE_WIDTH = 80;
 
 using namespace std;
 
@@ -27,6 +32,8 @@ public:
     virtual bool loadImage(string path, SDL_Renderer* ren);
 
     void render(SDL_Renderer* ren, const SDL_Rect* clip);
+
+    virtual bool checkCollision(const SDL_Rect& a, const SDL_Rect& b);
 
     void free();
 

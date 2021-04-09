@@ -9,9 +9,12 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     game->InitSDL();
+    srand(time(0));
     while(game->getGameState())
     {
         game->Render();
+
+        game->Update();
 
         game->Event();
     }

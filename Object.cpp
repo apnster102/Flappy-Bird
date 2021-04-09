@@ -44,7 +44,7 @@ bool Object::loadImage(string path, SDL_Renderer* ren)
 
 void Object::render(SDL_Renderer* ren, const SDL_Rect* clip)
 {
-    SDL_Rect renderQuad = { rect.x, rect.y, rect.w, rect.h };
+    SDL_Rect renderQuad = {rect.x, rect.y, rect.w, rect.h};
     if (clip != NULL)
     {
         renderQuad.w = clip->w;
@@ -58,6 +58,7 @@ void Object::setRect (const int& x, const int& y)
     rect.x = x;
     rect.y = y;
 }
+
 SDL_Texture* Object::getTex() const
 {
     return tex;
@@ -65,6 +66,31 @@ SDL_Texture* Object::getTex() const
 SDL_Rect Object::getRect() const
 {
     return rect;
+}
+
+bool Object::checkCollision(const SDL_Rect& a, const SDL_Rect& b)
+{
+    int leftA, leftB;
+    int rightA, rightB;
+    int topA, topB;
+    int bottomA, bottomB;
+
+    leftA = a.x;
+    rightA = a.x + a.w;
+    topA = a.y;
+    bottomA = a.y + a.h;
+
+    leftB = b.x;
+    rightB = b.x + b.w;
+    topB = b.y;
+    bottomB = b.y + b.h;
+
+    if( bottomA <= topB || topA >= bottomB || rightA <= leftB || leftA >= rightB )
+    {
+        return false;
+    }
+
+    return true;
 }
 
 void Object::free()
