@@ -33,7 +33,6 @@ PipePair::PipePair()
     lowerPipe.setPos(0);
     posX = 0;
     offset = 0;
-    moving = true;
 }
 
 bool PipePair::spawnPipes(SDL_Renderer* ren)
@@ -66,8 +65,6 @@ void PipePair::roll(SDL_Renderer* ren)
 
         offset = SCREEN_WIDTH;
     }
-    render(ren);
-
 }
 
 bool PipePair::collided(SDL_Rect player)
@@ -79,9 +76,11 @@ bool PipePair::collided(SDL_Rect player)
     return false;
 }
 
-void PipePair::pause()
+bool PipePair::passed(SDL_Rect player)
 {
-    offset -= 0;
+    if(!collided(player)&& player.x == posX + PIPE_WIDTH)
+        return true;
+    return false;
 }
 
 PipePair::~PipePair()

@@ -24,7 +24,7 @@ void BackGround::render(SDL_Renderer* ren)
 
 void BackGround::groundScrolling(SDL_Renderer* ren)
 {
-    scrollingOffset -= 2;
+    scrollingOffset -= 1;
 
     if (scrollingOffset < -rect.w)
 	{

@@ -68,7 +68,7 @@ void Player::move()
     rect.y += step;
 }
 
-void Player::handleEvent(SDL_Event event, SDL_Renderer* ren)
+void Player::handleEvent(SDL_Event event)
 {
     if(event.type == SDL_MOUSEBUTTONDOWN && !getLiveState())
     {
@@ -83,7 +83,7 @@ void Player::handleEvent(SDL_Event event, SDL_Renderer* ren)
         flyUp = false;
     }
     //if the bird hit the ground
-    if(rect.y >= SCREEN_HEIGHT-rect.h-GROUND_HEIGHT+2 || rect.y <= 0)
+    if(rect.y >= SCREEN_HEIGHT-rect.h-GROUND_HEIGHT || rect.y <= 0)
     {
         step = 0;
         degree = 0;

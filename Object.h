@@ -2,11 +2,12 @@
 #define OBJECT__H_
 
 #include <SDL.h>
-#include "SDL_image.h"
+#include <SDL_image.h>
+#include <SDL_mixer.h>
 #include <iostream>
 const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 540;
-const int GROUND_HEIGHT = 50;
+const int GROUND_HEIGHT = 47;
 const int PIPE_HEIGHT = 300;
 const int PIPE_WIDTH = 80;
 

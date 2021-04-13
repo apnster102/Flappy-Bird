@@ -2,8 +2,10 @@
 #define GAMELOOP__H_
 
 #include <iostream>
+#include <fstream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include "BackGround.h"
 #include "Player.h"
 #include "BackGround.h"
@@ -26,13 +28,19 @@ private:
 	int numOfPipes = 3;
 	PipePair* pipes = new PipePair[numOfPipes];
 
+	ofstream HighScore;
+
 	int score;
+
+	Mix_Music* bgMusic;
+	Mix_Chunk* hit;
 
 public:
 	GameLoop();
 	bool getGameState();
 	void logSDLError(std::ostream& os, const std::string &msg, bool fatal);
 	void InitSDL();
+	bool loadMedia();
 	void Event();
 	void Update();
 	void Render();

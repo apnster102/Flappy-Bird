@@ -12,7 +12,7 @@ public:
 
     bool loadImage(const char* path, SDL_Renderer* ren);
     void render(SDL_Renderer* ren);
-    void handleEvent(SDL_Event event, SDL_Renderer* ren);
+    void handleEvent(SDL_Event event);
     void setSprite();
     void move();
     bool getLiveState();

@@ -8,6 +8,8 @@ GameLoop::GameLoop()
     renderer = NULL;
     GameState = false;
     score = 0;
+    bgMusic = NULL;
+    hit = NULL;
 }
 
 bool GameLoop::getGameState()
@@ -42,27 +44,58 @@ void GameLoop::InitSDL()
     {
         cout << "Renderer created!" << endl;
         GameState = true;
-
-        gPlayer.loadImage("image/flyGreen.png", renderer);
-        gPlayer.setRect(400, 200);
-        gPlayer.setSprite();
-
-        ground.loadImage("image/ground.png", renderer);
-        ground.setRect(0, SCREEN_HEIGHT-50);
-
-        background.loadImage("image/background.png", renderer);
-        background.setRect(0,0);
-
-
-        for(int i = 0; i < numOfPipes; i++)
-        {
-            pipes[i].spawnPipes(renderer);
-            pipes[i].setOffset(900 + i*330);
-        }
     }
+
+    if(Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+        logSDLError(cout, "Open Audio", true);
+
+    HighScore.open("Score.txt");
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+}
+
+bool GameLoop::loadMedia()
+{
+    gPlayer.loadImage("image/flyGreen.png", renderer);
+    gPlayer.setRect(400, 200);
+    gPlayer.setSprite();
+
+    ground.loadImage("image/ground.png", renderer);
+    ground.setRect(0, SCREEN_HEIGHT-50);
+
+    background.loadImage("image/background.png", renderer);
+    background.setRect(0,0);
+
+    for(int i = 0; i < numOfPipes; i++)
+    {
+        pipes[i].spawnPipes(renderer);
+        pipes[i].setOffset(900 + i*330);
+    }
+
+    bgMusic = Mix_LoadMUS("sound/gumball_outro.mp3");
+    if(bgMusic == NULL) GameState = false;
+
+    if( Mix_PlayingMusic() == 0 )
+    {
+        Mix_PlayMusic( bgMusic, -1 );
+    }
+    else
+    {
+        if( Mix_PausedMusic() == 1 )
+        {
+            Mix_ResumeMusic();
+        }
+        else
+        {
+            Mix_PauseMusic();
+        }
+    }
+
+    hit = Mix_LoadWAV("sound/ouch.mp3");
+
+    return GameState;
 }
 
 void GameLoop::Event()
@@ -73,15 +106,27 @@ void GameLoop::Event()
         GameState = false;
     }
 
-    gPlayer.handleEvent(event1, renderer);
-    if(pipes->collided(gPlayer.getFrameRect()))
+    gPlayer.handleEvent(event1);
+
+    for (int i = 0; i < numOfPipes; i++)
     {
-        gPlayer.setLiveState(true);
+        if(pipes[i].collided(gPlayer.getFrameRect()))
+        {
+            if(!gPlayer.getLiveState()) Mix_PlayChannel(-1, hit, 0);
+            gPlayer.setLiveState(true);
+        }
     }
+
 }
 
 void GameLoop::Update()
 {
+    for (int i = 0; i < numOfPipes; i++)
+    if(pipes[i].passed(gPlayer.getFrameRect())&& !gPlayer.getLiveState())
+    {
+        score += 10;
+        HighScore << score << endl;
+    }
 
 }
 
@@ -95,7 +140,9 @@ void GameLoop::Render()
 
     for(int i = 0; i < numOfPipes; i++)
     {
-        pipes[i].roll(renderer);
+        if(!gPlayer.getLiveState())
+            pipes[i].roll(renderer);
+        pipes[i].render(renderer);
     }
 
     ground.groundScrolling(renderer);

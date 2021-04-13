@@ -8,16 +8,21 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    game->InitSDL();
     srand(time(0));
-    while(game->getGameState())
+    game->InitSDL();
+    if(game->loadMedia())
     {
-        game->Render();
+        while(game->getGameState())
+        {
+            game->Render();
 
-        game->Update();
+            game->Event();
 
-        game->Event();
+            game->Update();
+        }
+        game->QuitSDL();
     }
-    game->QuitSDL();
+
+
     return 0;
 }
