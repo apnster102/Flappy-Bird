@@ -41,7 +41,7 @@ bool PipePair::spawnPipes(SDL_Renderer* ren)
     bool load2 = lowerPipe.loadImage("image/LowerPipe.png", ren);
 
     lowerPipe.setPos(rand()%210 +(SCREEN_HEIGHT - PIPE_HEIGHT));
-    cout << lowerPipe.getPos() << endl;
+    cout << "Pipes' initial position: " << lowerPipe.getPos() << endl;
     upperPipe.setPos(lowerPipe.getPos() - 450);
     lowerPipe.setRect(posX, lowerPipe.getPos());
     upperPipe.setRect(posX, upperPipe.getPos());
@@ -78,7 +78,7 @@ bool PipePair::collided(SDL_Rect player)
 
 bool PipePair::passed(SDL_Rect player)
 {
-    if(!collided(player)&& player.x == posX + PIPE_WIDTH)
+    if(!collided(player) && player.x == posX +70)
         return true;
     return false;
 }

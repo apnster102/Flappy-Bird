@@ -70,16 +70,23 @@ void Player::move()
 
 void Player::handleEvent(SDL_Event event)
 {
-    if(event.type == SDL_MOUSEBUTTONDOWN && !getLiveState())
+    if(flyUp)
     {
         step = -5;
         degree = -30;
+    }
+    else
+    {
+        step = 5;
+        degree = 30;
+    }
+
+    if(event.type == SDL_MOUSEBUTTONDOWN && !getLiveState())
+    {
         flyUp = true;
     }
     else if(event.type == SDL_MOUSEBUTTONUP||getLiveState())
     {
-        step = 5;
-        degree = 30;
         flyUp = false;
     }
     //if the bird hit the ground

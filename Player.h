@@ -17,7 +17,6 @@ public:
     void move();
     bool getLiveState();
     void setLiveState(bool lState);
-    bool hitTheGround();
     SDL_Rect getFrameRect();
 private:
     float step;

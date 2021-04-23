@@ -4,12 +4,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+#include <SDL_ttf.h>
 #include <iostream>
 const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 540;
 const int GROUND_HEIGHT = 47;
 const int PIPE_HEIGHT = 300;
-const int PIPE_WIDTH = 80;
+const int PIPE_WIDTH = 67;
 
 using namespace std;
 
@@ -29,6 +30,8 @@ public:
     SDL_Texture* getTex() const;
 
     SDL_Rect getRect() const;
+
+    int getPosX(){return rect.x;}
 
     virtual bool loadImage(string path, SDL_Renderer* ren);
 
