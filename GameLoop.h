@@ -24,7 +24,6 @@ private:
 	const char* WINDOW_TITLE = "FLAPPY BIRD";
 
 	bool GameState;
-	bool restart, start;
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
@@ -43,10 +42,12 @@ private:
 	string tScore;
 
 	string highscore;
+	bool newhs;
 
 	TTF_Font* gFont;
 	TTF_Font* menuFont;
-	Text score_text, highscore_text, gameover_text;
+	TTF_Font* hsFont;
+	Text score_text, highscore_text, gameover_text, newHscore_text;
 
 
 	Mix_Chunk* mouseClick;
@@ -58,21 +59,25 @@ private:
 	Button ReplayButton, ExitButton;
 
 	string show;
+	string play;
 
 public:
 	GameLoop();
+	void Restart();
 	bool getGameState();
-	bool getGame();
+	bool getst();
 	void logSDLError(std::ostream& os, const std::string &msg, bool fatal);
 	void InitSDL();
 	bool loadMedia();
 	Mix_Music* bgMusic;
 	Mix_Music* menuMusic;
 	void PlayMusic(Mix_Music* music);
-	void Event();
+	void MenuEvent();
+	void GameEvent();
 	string GetHighScore(string path);
 	void UpdateHighScore(string path, const int& score, const string& ohScore);
-	void Render();
+	void RenderMenu();
+	void RenderGameWindow();
 	void QuitSDL();
 	~GameLoop();
 

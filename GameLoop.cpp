@@ -7,9 +7,9 @@ GameLoop::GameLoop()
     window = NULL;
     renderer = NULL;
     GameState = false;
-    start = true;
     score = 0;
     highscore = GetHighScore("Score.txt");
+    newhs = false;
     bgMusic = NULL;
     menuMusic = NULL;
     mouseClick = NULL;
@@ -18,7 +18,9 @@ GameLoop::GameLoop()
     ting = NULL;
     gFont = NULL;
     menuFont = NULL;
+    hsFont = NULL;
     show = "Menu";
+    play = "Play";
 }
 
 bool GameLoop::getGameState()
@@ -26,9 +28,28 @@ bool GameLoop::getGameState()
     return GameState;
 }
 
-bool GameLoop::getGame()
+bool GameLoop::getst()
 {
-    return start;
+    return show == "Game";
+}
+
+void GameLoop::Restart()
+{
+
+    if(play == "Replay")
+    {
+        score = 0;
+        for(int i = 0; i < numOfPipes; i++)
+        {
+            pipes[i].spawnPipes(renderer);
+            pipes[i].setOffset(880 + i*340);
+        }
+
+        gPlayer.setLiveState(0);
+        gPlayer.setRect(400, 200);
+
+    }
+    play = "Play";
 }
 
 void GameLoop::logSDLError(ostream& os, const string &msg, bool fatal)
@@ -78,7 +99,7 @@ bool GameLoop::loadMedia()
     menu.loadImage("image/Menu.jpg", renderer);
     menu.setRect(0,0);
 
-    instruction.loadImage("image/instruction.jpg", renderer);
+    instruction.loadImage("image/Instruction_.jpg", renderer);
     menu.setRect(0,0);
 
     gPlayer.loadImage("image/flyGreen.png", renderer);
@@ -124,8 +145,10 @@ bool GameLoop::loadMedia()
     mouseClick = Mix_LoadWAV("sound/sound_mouse_click.wav");
     if(mouseClick == NULL) GameState = false;
     hit = Mix_LoadWAV("sound/game_over.mp3");
+    Mix_VolumeChunk(hit, 50);
     if(hit == NULL) GameState = false;
     punch = Mix_LoadWAV("sound/punch.mp3");
+    Mix_VolumeChunk(punch, MIX_MAX_VOLUME);
     if(punch == NULL) GameState = false;
     ting = Mix_LoadWAV("sound/flappy_bird_sms.mp3");
     if(ting == NULL) GameState = false;
@@ -136,9 +159,14 @@ bool GameLoop::loadMedia()
     menuFont = TTF_OpenFont("font/Showcard Gothic Regular.ttf", 43);
     if(menuFont == NULL) GameState = false;
 
+    hsFont = TTF_OpenFont("font/Showcard Gothic Regular.ttf", 24);
+    if(hsFont == NULL) GameState = false;
+
     gameover_text.SetText("GAME OVER!");
     gameover_text.loadFromRenderedText(gFont, renderer);
 
+    newHscore_text.SetText("New High Score!");
+    newHscore_text.loadFromRenderedText(hsFont, renderer);
     return GameState;
 }
 
@@ -157,20 +185,41 @@ void GameLoop::PlayMusic(Mix_Music* music)
         else
         {
             Mix_PauseMusic();
+            Mix_PlayMusic(music, -1);
         }
     }
 }
 
-void GameLoop::Event()
+void GameLoop::MenuEvent()
 {
     SDL_PollEvent(&event);
     if(event.type == SDL_QUIT)
     {
         GameState = false;
     }
+
+    if(show == "Menu")
+    {
+        PlayButton.handleButtonEvent(event, mouseClick, show, "Game");
+        HelpButton.handleButtonEvent(event, mouseClick, show, "Instruction");
+    }
+    else if(show == "Instruction")
+    {
+        BackButton.handleButtonEvent(event, mouseClick, show, "Menu");
+    }
+}
+
+void GameLoop::GameEvent()
+{
+    SDL_PollEvent(&event);
+    if(event.type == SDL_QUIT)
+    {
+        GameState = false;
+    }
+
     if(show == "Game")
     {
-        start = true;
+        gPlayer.move();
         gPlayer.handleEvent(event);
 
         //update score
@@ -195,38 +244,32 @@ void GameLoop::Event()
                 if(!gPlayer.getLiveState())
                 {
                     Mix_PlayChannel(-1, punch, 0);
-                    //Mix_PlayChannel(-1, hit, 0);
+
                     UpdateHighScore("Score.txt", score, highscore);
+                    cout << "Score: " << score << endl;
+                    Mix_PlayChannel(-1, hit, 0);
                 }
-                //Mix_PauseMusic();
+
                 gPlayer.setLiveState(true);
 
             }
         }
-    }
 
-    else if(show == "Menu")
-    {
-        PlayButton.handleButtonEvent(event, mouseClick, show, "Game");
-        HelpButton.handleButtonEvent(event, mouseClick, show, "Instruction");
-    }
-    else if(show == "Instruction")
-    {
-        BackButton.handleButtonEvent(event, mouseClick, show, "Menu");
-    }
+        if(gPlayer.getLiveState())
+        {
+            ReplayButton.handleButtonEvent(event, mouseClick, play, "Replay");
+            ExitButton.handleButtonEvent(event, mouseClick, play, "Exit");
+        }
 
-    if(gPlayer.getLiveState())
-    {
-        ReplayButton.handleButtonEvent(event, mouseClick, show, "Game");
-        ExitButton.handleButtonEvent(event, mouseClick, show, "Game");
+        if(play == "Exit")
+        {
+            GameState = false;
+        }
     }
-
 }
 
-
-void GameLoop::Render()
+void GameLoop::RenderMenu()
 {
-    gPlayer.move();
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 
@@ -237,7 +280,22 @@ void GameLoop::Render()
         HelpButton.RenderButton(renderer, "HELP", menuFont);
     }
 
-    else if(show == "Game")
+    else if(show == "Instruction")
+    {
+        instruction.render(renderer);
+        BackButton.RenderButton(renderer, "", menuFont);
+    }
+
+    SDL_RenderPresent(renderer);
+}
+
+void GameLoop::RenderGameWindow()
+{
+//    gPlayer.move();
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
+
+    if(show == "Game")
     {
         background.render(renderer);
 
@@ -258,19 +316,16 @@ void GameLoop::Render()
             gameoverBox.render(renderer);
             gameover_text.RenderText(renderer,SCREEN_WIDTH/2-gameover_text.getWidth()/2, 150);
             highscore_text.RenderText(renderer, SCREEN_WIDTH/2-highscore_text.getWidth()/2, 250);
+
             ReplayButton.RenderButton(renderer, "REPLAY", menuFont);
             ExitButton.RenderButton(renderer, "EXIT", menuFont);
+            if(newhs)
+                newHscore_text.RenderText(renderer, SCREEN_WIDTH/2-newHscore_text.getWidth()/2, 300);
         }
-
-
-    }
-    else if(show == "Instruction")
-    {
-        instruction.render(renderer);
-        BackButton.RenderButton(renderer, "", menuFont);
     }
 
     SDL_RenderPresent(renderer);
+
 }
 
 string GameLoop::GetHighScore(string path)
@@ -298,6 +353,7 @@ void GameLoop::UpdateHighScore(string path, const int& score, const string& ohSc
 	{
 		oldHighScore = score;
 		highscore = to_string(score);
+        newhs = true;
 	}
 	newHighScore = to_string(oldHighScore);
 

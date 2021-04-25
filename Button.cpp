@@ -43,6 +43,7 @@ void Button::handleButtonEvent(SDL_Event e, Mix_Chunk* click, string &show, stri
             if(show != choice)
                 Mix_PlayChannel(-1, click, 0);
             show = choice;
+            cout << show << endl;
         }
     }
     else

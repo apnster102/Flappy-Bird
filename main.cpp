@@ -6,26 +6,37 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    GameLoop* game = new GameLoop();
-    game->InitSDL();
     srand(time(0));
+
+    GameLoop* game = new GameLoop();
+
+    game->InitSDL();
 
     if(game->loadMedia())
     {
         bool quitMenu = false;
-        bool replay = game->getGame();
-
+        bool playing = false;
         game->PlayMusic(game->menuMusic);
 
-        while(game->getGameState())
+        while(!quitMenu && game->getGameState())
         {
-            game->Render();
-
-            game->Event();
-
+            game->RenderMenu();
+            game->MenuEvent();
+            quitMenu = game->getst();
         }
+        playing = true;
+        game->PlayMusic(game->bgMusic);
+
+        do
+        {
+            game->Restart();
+            game->RenderGameWindow();
+            game->GameEvent();
+        }while(playing && game->getGameState());
+
         game->QuitSDL();
     }
+
 
     return 0;
 }
