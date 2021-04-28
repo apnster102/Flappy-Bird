@@ -81,11 +81,12 @@ void Player::handleEvent(SDL_Event event)
         degree = 30;
     }
 
-    if(event.type == SDL_MOUSEBUTTONDOWN && !getLiveState())
+    if(event.type == SDL_KEYDOWN && !getLiveState())
     {
-        flyUp = true;
+        if(event.key.keysym.sym == SDLK_SPACE)
+            flyUp = true;
     }
-    else if(event.type == SDL_MOUSEBUTTONUP||getLiveState())
+    else if(event.type == SDL_KEYUP||getLiveState())
     {
         flyUp = false;
     }
