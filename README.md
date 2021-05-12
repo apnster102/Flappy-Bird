@@ -1,8 +1,6 @@
 # Flappy-Bird
 FLAPPY BIRD SDL2.0 C++
 
-Điểm tự đánh giá: 8 
-
 -Game có đồ họa đơn giản.
 
 -Game chạy không bị giật, lỗi.
